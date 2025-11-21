@@ -1,0 +1,5 @@
+{
+  "name": "Matric Prep",
+  "description": "An interactive quiz application to help students prepare for their matriculation exams in various subjects. It features quizzes, past paper practice, and progress tracking.",
+  "requestFramePermissions": []
+}
