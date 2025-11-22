@@ -1,9 +1,13 @@
+
 import React, { useState, useCallback } from 'react';
 import { User, View, QuizDetails, PastPaperDetails, BookDetails } from './types';
 import { supabase } from './lib/supabase';
 
 import HomeScreen from './components/HomeScreen';
 import LoginScreen from './components/LoginScreen';
+import VerifyEmailScreen from './components/VerifyEmailScreen';
+import WelcomeScreen from './components/WelcomeScreen';
+import OnboardingScreen from './components/OnboardingScreen';
 import SubjectSelectionScreen from './components/SubjectSelectionScreen';
 import UnitSelectionScreen from './components/UnitSelectionScreen';
 import LevelSelectionScreen from './components/LevelSelectionScreen';
@@ -49,10 +53,40 @@ const App: React.FC = () => {
         });
     }, []);
 
+    // Called after successful LOGIN
     const handleLoginSuccess = (user: User) => {
         setCurrentUser(user);
-        navigate('subjects');
+        // If user has no name, send to onboarding. Otherwise, go to subjects.
+        if (!user.name) {
+            navigate('onboarding');
+        } else {
+            navigate('subjects');
+        }
     };
+
+    // Called after successful SIGNUP (Initial DB creation)
+    const handleSignupSuccess = (user: User) => {
+        setCurrentUser(user);
+        // Go to email verification
+        navigate('verify-email');
+    }
+    
+    // Called after Verify Email
+    const handleEmailVerified = () => {
+        navigate('welcome');
+    }
+
+    // Called after Welcome Screen
+    const handleWelcomeContinue = () => {
+         // Check if we still need full name (Onboarding)
+         // Since we only asked for Username in signup, we probably still need 'Name'
+         // unless we treat Username as Name. Let's stick to the logic: if Name is empty, go onboarding.
+         if (!currentUser?.name) {
+            navigate('onboarding');
+         } else {
+            navigate('subjects');
+         }
+    }
 
     const handleLogout = () => {
         setCurrentUser(null);
@@ -62,48 +96,114 @@ const App: React.FC = () => {
 
     // --- Supabase Actions ---
 
-    const handleUpdateUser = async (updatedUser: User) => {
-        // 1. Optimistic Update
+    // 1. General Profile Update (Phone, Streak, Name)
+    const handleUpdateProfile = async (updatedUser: User) => {
         setCurrentUser(updatedUser);
-
-        // 2. Persist to Supabase
         try {
             const { error } = await supabase
                 .from('users')
                 .update({
-                    progress: updatedUser.progress,
+                    full_name: updatedUser.name,
+                    phone: updatedUser.phone,
                     streak: updatedUser.streak,
                     last_quiz_date: updatedUser.lastQuizDate,
-                    phone: updatedUser.phone
+                    progress: updatedUser.progress 
                 })
                 .eq('id', updatedUser.id);
             
             if (error) throw error;
         } catch (err) {
-            console.error("Failed to sync user data:", err);
-            // Ideally, revert optimistic update or show notification here
+            console.error("Failed to sync profile:", err);
         }
     };
 
-    const handleLoginAttempt = async (username: string, password: string): Promise<User | null> => {
+    // 2. Save Quiz Result
+    const handleSaveQuizResult = async (updatedUser: User, subject: string, score: number, total: number, unit?: string, level?: number, year?: string, type: 'quiz' | 'past_paper' = 'quiz') => {
+        setCurrentUser(updatedUser);
+
+        try {
+            let totalScore = 0;
+            let totalPossible = 0;
+            updatedUser.progress.forEach(p => {
+                totalScore += p.score;
+                totalPossible += p.total;
+            });
+            const globalPercentage = totalPossible > 0 ? totalScore / totalPossible : 0;
+            const estimatedScore = Math.round(globalPercentage * 700);
+
+            const { error: historyError } = await supabase
+                .from('quiz_history')
+                .insert({
+                    user_id: updatedUser.id,
+                    subject: subject,
+                    unit: unit || null,
+                    level: level || null,
+                    year: year || null,
+                    type: type,
+                    score: score,
+                    total: total,
+                    percentage: (score/total) * 100
+                });
+            
+            if (historyError) console.error("History insert error:", historyError);
+
+            const { error: userError } = await supabase
+                .from('users')
+                .update({
+                    streak: updatedUser.streak,
+                    last_quiz_date: updatedUser.lastQuizDate,
+                    estimated_score: estimatedScore,
+                    progress: updatedUser.progress
+                })
+                .eq('id', updatedUser.id);
+
+            if (userError) throw userError;
+
+        } catch (err) {
+            console.error("Failed to save quiz result:", err);
+        }
+    };
+
+    // 3. Complete Onboarding
+    const handleCompleteOnboarding = async (finalizedUser: User) => {
+        await handleUpdateProfile(finalizedUser);
+        navigate('subjects');
+    };
+
+    // Login: Now uses EMAIL
+    const handleLoginAttempt = async (email: string, password: string): Promise<User | null> => {
         try {
             const { data, error } = await supabase
                 .from('users')
                 .select('*')
-                .eq('id', username)
+                .eq('email', email)
                 .single();
             
             if (error || !data) return null;
 
-            // Check password (in a real app, use auth.signInWithPassword instead of a users table)
             if (data.password === password) {
-                // Map DB snake_case to App camelCase
+                const { data: historyData } = await supabase
+                    .from('quiz_history')
+                    .select('*')
+                    .eq('user_id', data.id);
+
+                const progressMapped = (historyData || []).map((h: any) => ({
+                    subject: h.subject,
+                    unit: h.unit,
+                    level: h.level,
+                    year: h.year,
+                    type: h.type,
+                    score: h.score,
+                    total: h.total
+                }));
+
                 return {
                     id: data.id,
+                    name: data.full_name,
                     password: data.password,
                     email: data.email,
                     phone: data.phone,
-                    progress: data.progress || [],
+                    progress: progressMapped,
                     streak: data.streak || 0,
                     lastQuizDate: data.last_quiz_date
                 };
@@ -115,23 +215,23 @@ const App: React.FC = () => {
         }
     };
 
-    const handleSignupAttempt = async (username: string, password: string, phone: string): Promise<User | null> => {
+    // Signup: Uses Username, Email, Password
+    const handleSignupAttempt = async (username: string, email: string, password: string): Promise<User | null> => {
         try {
-            // Check if user exists
+            // Check if username OR email exists
             const { data: existing } = await supabase
                 .from('users')
-                .select('id')
-                .eq('id', username)
+                .select('id, email')
+                .or(`id.eq.${username},email.eq.${email}`)
                 .single();
             
-            if (existing) return null;
+            if (existing) return null; // User/Email exists
 
-            // Insert new user
             const newUser = {
                 id: username,
+                email: email,
                 password: password,
-                email: username,
-                phone: phone || null,
+                full_name: null, 
                 progress: [],
                 streak: 0,
                 last_quiz_date: null
@@ -146,12 +246,12 @@ const App: React.FC = () => {
                 return null;
             }
 
-            // Map to App Type
             return {
                 id: newUser.id,
+                name: undefined,
                 password: newUser.password,
                 email: newUser.email,
-                phone: newUser.phone,
+                phone: null,
                 progress: [],
                 streak: 0,
                 lastQuizDate: null
@@ -173,8 +273,15 @@ const App: React.FC = () => {
                         onLoginAttempt={handleLoginAttempt}
                         onSignupAttempt={handleSignupAttempt}
                         onLoginSuccess={handleLoginSuccess} 
+                        onSignupSuccess={handleSignupSuccess}
                     />
                 );
+            case 'verify-email':
+                return <VerifyEmailScreen email={currentUser?.email || ''} onVerified={handleEmailVerified} />;
+            case 'welcome':
+                return <WelcomeScreen name={currentUser?.id || 'Student'} onContinue={handleWelcomeContinue} />;
+            case 'onboarding':
+                return <OnboardingScreen user={currentUser!} onComplete={handleCompleteOnboarding} />;
             case 'subjects':
                 return <SubjectSelectionScreen onSelectSubject={(subject) => { setSelectedSubject(subject); navigate('units'); }} goBack={goBack} />;
             case 'units':
@@ -182,13 +289,13 @@ const App: React.FC = () => {
             case 'levels':
                 return <LevelSelectionScreen currentUser={currentUser!} subjectKey={selectedSubject!} unitKey={selectedUnit!} onSelectLevel={(level) => { setQuizDetails({ subject: selectedSubject!, unit: selectedUnit!, level }); setPastPaperDetails(null); navigate('quiz'); }} goBack={goBack} />;
             case 'quiz':
-                return <QuizScreen currentUser={currentUser!} onUpdateUser={handleUpdateUser} quizDetails={quizDetails} pastPaperDetails={pastPaperDetails} onQuizEnd={() => navigate('subjects')} goBack={goBack} />;
+                return <QuizScreen currentUser={currentUser!} onSaveQuizResult={handleSaveQuizResult} quizDetails={quizDetails} pastPaperDetails={pastPaperDetails} onQuizEnd={() => navigate('subjects')} goBack={goBack} />;
             case 'progress':
                 return <ProgressScreen user={currentUser!} />;
             case 'profile':
-                return <PersonalInfoScreen user={currentUser!} onUpdateUser={handleUpdateUser} onLogout={handleLogout} goBack={goBack} />;
+                return <PersonalInfoScreen user={currentUser!} onUpdateUser={handleUpdateProfile} onLogout={handleLogout} goBack={goBack} />;
             
-            // New Book Routes
+            // Book Routes
             case 'books':
                 return <BooksScreen onSelectSubject={(subject) => { setSelectedSubject(subject); navigate('book-grade'); }} goBack={goBack} />;
             case 'book-grade':
@@ -208,7 +315,7 @@ const App: React.FC = () => {
             <main className="w-full max-w-2xl mx-auto flex-grow pb-24">
                 {renderView()}
             </main>
-            {currentUser && view !== 'quiz' && <NavBar setView={navigate} activeView={view} />}
+            {currentUser && !['quiz', 'login', 'home', 'onboarding', 'verify-email', 'welcome'].includes(view) && <NavBar setView={navigate} activeView={view} />}
         </div>
     );
 };

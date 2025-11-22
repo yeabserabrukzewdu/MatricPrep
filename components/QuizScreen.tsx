@@ -10,14 +10,14 @@ import { GoogleGenAI } from "@google/genai";
 
 interface QuizScreenProps {
     currentUser: User;
-    onUpdateUser: (user: User) => void;
+    onSaveQuizResult: (user: User, subject: string, score: number, total: number, unit?: string, level?: number, year?: string, type?: 'quiz' | 'past_paper') => void;
     quizDetails: QuizDetails | null;
     pastPaperDetails: PastPaperDetails | null;
     onQuizEnd: () => void;
     goBack: () => void;
 }
 
-const QuizScreen: React.FC<QuizScreenProps> = ({ currentUser, onUpdateUser, quizDetails, pastPaperDetails, onQuizEnd, goBack }) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({ currentUser, onSaveQuizResult, quizDetails, pastPaperDetails, onQuizEnd, goBack }) => {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -78,12 +78,20 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ currentUser, onUpdateUser, quiz
             updatedUser.lastQuizDate = today;
         }
 
+        // Create local progress entry for immediate UI update
         const progressEntry = pastPaperDetails 
             ? { subject: pastPaperDetails.subject, year: pastPaperDetails.year, type: 'past_paper' as const, score: score, total: questions.length }
             : { subject: quizDetails!.subject, unit: quizDetails!.unit, level: quizDetails!.level, score: score, total: questions.length };
         
         updatedUser.progress.push(progressEntry);
-        onUpdateUser(updatedUser);
+
+        // Call parent to save to DB
+        if (pastPaperDetails) {
+             onSaveQuizResult(updatedUser, pastPaperDetails.subject, score, questions.length, undefined, undefined, pastPaperDetails.year, 'past_paper');
+        } else {
+             onSaveQuizResult(updatedUser, quizDetails!.subject, score, questions.length, quizDetails!.unit, quizDetails!.level, undefined, 'quiz');
+        }
+
         setShowScoreModal(true);
     }
 

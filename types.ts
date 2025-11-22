@@ -38,7 +38,8 @@ export interface ProgressEntry {
 }
 
 export interface User {
-    id: string; // username or googleId
+    id: string; // username
+    name?: string; // Full Name
     password?: string;
     phone?: string | null;
     email: string;
@@ -68,7 +69,7 @@ export interface BookSubject {
     };
 }
 
-export type View = 'home' | 'login' | 'subjects' | 'units' | 'levels' | 'quiz' | 'progress' | 'profile' | 'books' | 'book-grade' | 'book-chapters' | 'book-reader';
+export type View = 'home' | 'login' | 'verify-email' | 'welcome' | 'onboarding' | 'subjects' | 'units' | 'levels' | 'quiz' | 'progress' | 'profile' | 'books' | 'book-grade' | 'book-chapters' | 'book-reader';
 
 
 export interface QuizDetails {

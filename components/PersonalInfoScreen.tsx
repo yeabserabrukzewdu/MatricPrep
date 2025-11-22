@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User } from '../types';
 import Container from './common/Container';
@@ -10,91 +11,109 @@ interface PersonalInfoScreenProps {
     goBack: () => void;
 }
 
-const InfoRow: React.FC<{ icon: React.ReactNode; label: string; value: string }> = ({ icon, label, value }) => (
-    <div className="flex items-center py-3">
-        <div className="flex-shrink-0 w-8 text-slate-400">{icon}</div>
+const InfoRow: React.FC<{ icon: React.ReactNode; label: string; value: string; onEdit?: () => void }> = ({ icon, label, value, onEdit }) => (
+    <div className="flex items-center py-4">
+        <div className="flex-shrink-0 w-10 text-slate-400 dark:text-slate-500">{icon}</div>
         <div className="flex-grow">
-            <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
-            <p className="text-slate-800 dark:text-white font-semibold break-all">{value}</p>
+            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{label}</p>
+            <p className="text-lg text-slate-800 dark:text-white font-bold break-all">{value}</p>
         </div>
+        {onEdit && (
+             <button onClick={onEdit} className="text-sm font-bold text-blue-500 hover:text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-lg">
+                Edit
+            </button>
+        )}
     </div>
 );
 
 const PersonalInfoScreen: React.FC<PersonalInfoScreenProps> = ({ user, onUpdateUser, onLogout, goBack }) => {
-    const [isEditingPhone, setIsEditingPhone] = useState(false);
-    const [newPhone, setNewPhone] = useState(user.phone || '');
+    const [editMode, setEditMode] = useState<'name' | 'phone' | null>(null);
+    const [tempValue, setTempValue] = useState('');
 
-    const handleUpdatePhone = () => {
-        if (newPhone.trim() === '') return;
-        const updatedUser = { ...user, phone: newPhone };
-        onUpdateUser(updatedUser);
-        setIsEditingPhone(false);
+    const startEdit = (field: 'name' | 'phone') => {
+        setEditMode(field);
+        setTempValue(field === 'name' ? (user.name || '') : (user.phone || ''));
     };
 
-    const UserAvatar: React.FC<{ email: string }> = ({ email }) => (
-        <div className="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center mx-auto text-white text-4xl font-bold">
-            {email?.[0]?.toUpperCase() || 'U'}
-        </div>
-    );
+    const handleSave = () => {
+        if (editMode === 'name') {
+            onUpdateUser({ ...user, name: tempValue });
+        } else if (editMode === 'phone') {
+            onUpdateUser({ ...user, phone: tempValue });
+        }
+        setEditMode(null);
+    };
+
+    const UserAvatar: React.FC<{ name?: string, email: string }> = ({ name, email }) => {
+        const displayChar = name ? name[0] : email[0];
+        return (
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto text-white text-4xl font-bold shadow-lg border-4 border-white dark:border-slate-800">
+                {displayChar?.toUpperCase() || 'U'}
+            </div>
+        );
+    };
 
     return (
         <Container title="Profile" goBack={goBack}>
-            <div className="text-center mb-8">
-                <UserAvatar email={user.email} />
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-4 break-all">{user.email}</h2>
-                <div className="flex items-center justify-center mt-2">
-                    <span className="text-2xl">🔥</span>
-                    <p className="text-lg font-bold text-orange-500 ml-1">
-                        {user.streak || 0} Day Streak
-                    </p>
+            <div className="text-center mb-8 relative">
+                <UserAvatar name={user.name} email={user.email} />
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-4 break-words">{user.name || 'Student'}</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">@{user.id}</p>
+                
+                <div className="flex items-center justify-center mt-4 gap-2">
+                    <div className="bg-orange-100 dark:bg-orange-900/30 px-4 py-2 rounded-full flex items-center gap-2 border border-orange-200 dark:border-orange-800">
+                        <span className="text-xl">🔥</span>
+                        <p className="font-bold text-orange-600 dark:text-orange-400">
+                            {user.streak || 0} Day Streak
+                        </p>
+                    </div>
                 </div>
             </div>
 
             <div className="space-y-6">
+                {editMode && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fadeIn">
+                        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl w-full max-w-sm shadow-xl">
+                            <h3 className="font-bold text-lg mb-4 text-slate-800 dark:text-white">Update {editMode === 'name' ? 'Full Name' : 'Phone Number'}</h3>
+                            <input 
+                                type="text" 
+                                value={tempValue}
+                                onChange={e => setTempValue(e.target.value)}
+                                className="w-full p-3 border-2 border-slate-200 dark:border-slate-600 rounded-xl mb-4 bg-transparent text-slate-800 dark:text-white font-bold"
+                                autoFocus
+                            />
+                            <div className="flex gap-2">
+                                <Button onClick={handleSave}>Save</Button>
+                                <Button onClick={() => setEditMode(null)} variant="secondary">Cancel</Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div>
-                    <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Account Details</h3>
-                    <div className="bg-white dark:bg-slate-700 rounded-2xl border-2 border-slate-200 dark:border-slate-600 divide-y divide-slate-200 dark:divide-slate-600 px-4">
+                    <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2">Personal Details</h3>
+                    <div className="bg-white dark:bg-slate-800 rounded-3xl border-2 border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700 px-6 shadow-sm">
                         <InfoRow 
-                            icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>}
-                            label="Email"
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>}
+                            label="Full Name"
+                            value={user.name || 'Not set'}
+                            onEdit={() => startEdit('name')}
+                        />
+                        <InfoRow 
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>}
+                            label="Email / Username"
                             value={user.email}
                         />
-                         <div className="py-3">
-                            {isEditingPhone ? (
-                                <div className="space-y-3 animate-fadeIn">
-                                    <div>
-                                        <label className="text-sm text-slate-500 dark:text-slate-400">Phone Number</label>
-                                        <input
-                                            type="tel"
-                                            value={newPhone}
-                                            onChange={(e) => setNewPhone(e.target.value)}
-                                            placeholder="Enter phone number"
-                                            className="w-full p-2 mt-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <Button onClick={handleUpdatePhone} className="!text-sm !py-2">Save</Button>
-                                        <Button onClick={() => setIsEditingPhone(false)} variant="secondary" className="!text-sm !py-2">Cancel</Button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0 w-8 text-slate-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 6.75Z" /></svg>
-                                    </div>
-                                    <div className="flex-grow">
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">Phone</p>
-                                        <p className="text-slate-800 dark:text-white font-semibold">{user.phone || 'Not set'}</p>
-                                    </div>
-                                    <button onClick={() => setIsEditingPhone(true)} className="text-sm font-bold text-blue-500 hover:text-blue-600">Edit</button>
-                                </div>
-                            )}
-                        </div>
+                        <InfoRow 
+                             icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 6.75Z" /></svg>}
+                            label="Phone"
+                            value={user.phone || 'Not set'}
+                            onEdit={() => startEdit('phone')}
+                        />
                     </div>
                 </div>
 
-                <div>
-                    <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Danger Zone</h3>
+                <div className="px-2">
                     <Button onClick={onLogout} variant='danger'>
                         Log Out
                     </Button>
