@@ -7,7 +7,6 @@ import HomeScreen from './components/HomeScreen';
 import LoginScreen from './components/LoginScreen';
 import VerifyEmailScreen from './components/VerifyEmailScreen';
 import WelcomeScreen from './components/WelcomeScreen';
-import OnboardingScreen from './components/OnboardingScreen';
 import SubjectSelectionScreen from './components/SubjectSelectionScreen';
 import UnitSelectionScreen from './components/UnitSelectionScreen';
 import LevelSelectionScreen from './components/LevelSelectionScreen';
@@ -56,12 +55,7 @@ const App: React.FC = () => {
     // Called after successful LOGIN
     const handleLoginSuccess = (user: User) => {
         setCurrentUser(user);
-        // If user has no name, send to onboarding. Otherwise, go to subjects.
-        if (!user.name) {
-            navigate('onboarding');
-        } else {
-            navigate('subjects');
-        }
+        navigate('subjects');
     };
 
     // Called after successful SIGNUP (Initial DB creation)
@@ -78,14 +72,8 @@ const App: React.FC = () => {
 
     // Called after Welcome Screen
     const handleWelcomeContinue = () => {
-         // Check if we still need full name (Onboarding)
-         // Since we only asked for Username in signup, we probably still need 'Name'
-         // unless we treat Username as Name. Let's stick to the logic: if Name is empty, go onboarding.
-         if (!currentUser?.name) {
-            navigate('onboarding');
-         } else {
-            navigate('subjects');
-         }
+         // Directly go to subjects, skipping onboarding
+         navigate('subjects');
     }
 
     const handleLogout = () => {
@@ -164,12 +152,6 @@ const App: React.FC = () => {
         }
     };
 
-    // 3. Complete Onboarding
-    const handleCompleteOnboarding = async (finalizedUser: User) => {
-        await handleUpdateProfile(finalizedUser);
-        navigate('subjects');
-    };
-
     // Login: Now uses EMAIL
     const handleLoginAttempt = async (email: string, password: string): Promise<User | null> => {
         try {
@@ -231,7 +213,7 @@ const App: React.FC = () => {
                 id: username,
                 email: email,
                 password: password,
-                full_name: null, 
+                full_name: username, // Default full_name to username
                 progress: [],
                 streak: 0,
                 last_quiz_date: null
@@ -248,7 +230,7 @@ const App: React.FC = () => {
 
             return {
                 id: newUser.id,
-                name: undefined,
+                name: newUser.full_name,
                 password: newUser.password,
                 email: newUser.email,
                 phone: null,
@@ -279,9 +261,7 @@ const App: React.FC = () => {
             case 'verify-email':
                 return <VerifyEmailScreen email={currentUser?.email || ''} onVerified={handleEmailVerified} />;
             case 'welcome':
-                return <WelcomeScreen name={currentUser?.id || 'Student'} onContinue={handleWelcomeContinue} />;
-            case 'onboarding':
-                return <OnboardingScreen user={currentUser!} onComplete={handleCompleteOnboarding} />;
+                return <WelcomeScreen name={currentUser?.name || currentUser?.id || 'Student'} onContinue={handleWelcomeContinue} />;
             case 'subjects':
                 return <SubjectSelectionScreen onSelectSubject={(subject) => { setSelectedSubject(subject); navigate('units'); }} goBack={goBack} />;
             case 'units':
@@ -315,7 +295,7 @@ const App: React.FC = () => {
             <main className="w-full max-w-2xl mx-auto flex-grow pb-24">
                 {renderView()}
             </main>
-            {currentUser && !['quiz', 'login', 'home', 'onboarding', 'verify-email', 'welcome'].includes(view) && <NavBar setView={navigate} activeView={view} />}
+            {currentUser && !['quiz', 'login', 'home', 'verify-email', 'welcome'].includes(view) && <NavBar setView={navigate} activeView={view} />}
         </div>
     );
 };

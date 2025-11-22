@@ -69,7 +69,7 @@ export interface BookSubject {
     };
 }
 
-export type View = 'home' | 'login' | 'verify-email' | 'welcome' | 'onboarding' | 'subjects' | 'units' | 'levels' | 'quiz' | 'progress' | 'profile' | 'books' | 'book-grade' | 'book-chapters' | 'book-reader';
+export type View = 'home' | 'login' | 'verify-email' | 'welcome' | 'subjects' | 'units' | 'levels' | 'quiz' | 'progress' | 'profile' | 'books' | 'book-grade' | 'book-chapters' | 'book-reader';
 
 
 export interface QuizDetails {
