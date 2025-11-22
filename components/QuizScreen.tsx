@@ -123,10 +123,33 @@ const QuizScreen: React.FC<QuizScreenProps> = ({ currentUser, onSaveQuizResult, 
         }
     }
 
+    const getSafeApiKey = () => {
+        try {
+            // @ts-ignore
+            if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+                // @ts-ignore
+                return import.meta.env.VITE_API_KEY;
+            }
+        } catch (e) {}
+        
+        try {
+            if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+                return process.env.API_KEY;
+            }
+        } catch (e) {}
+        
+        return '';
+    };
+
     const handleAskAi = async () => {
         setIsAiLoading(true);
         try {
-            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const apiKey = getSafeApiKey();
+            if (!apiKey) {
+                throw new Error("API Key missing. Please add VITE_API_KEY to environment variables.");
+            }
+            
+            const ai = new GoogleGenAI({ apiKey: apiKey });
             const subjectName = quizDetails?.subject || pastPaperDetails?.subject || 'General';
             
             const prompt = `
