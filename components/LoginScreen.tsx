@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import Button from './common/Button';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface LoginScreenProps {
     onLoginAttempt: (email: string, password: string) => Promise<User | null>;
@@ -24,6 +25,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
 
     const handleSubmit = async () => {
         setError('');
+
+        if (!isSupabaseConfigured) {
+            setError("Configuration Error: Supabase keys are missing.");
+            return;
+        }
 
         if (mode === 'login') {
             if (!email || !password) {
@@ -78,6 +84,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
              <p className="text-slate-500 mb-8">{mode === 'login' ? 'Login with your email' : 'Join us to ace your exams'}</p>
 
             <div className="w-full max-w-sm space-y-4">
+                {/* Configuration Warning */}
+                {!isSupabaseConfigured && (
+                    <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 rounded mb-4 text-sm" role="alert">
+                        <p className="font-bold text-lg mb-1">⚠️ Connection Failed</p>
+                        <p className="mb-2">The app cannot connect to the database.</p>
+                        <p className="font-bold">If you are using Vercel:</p>
+                        <ul className="list-disc ml-4 mt-1 space-y-1">
+                            <li>Go to Vercel Dashboard &rarr; Settings &rarr; Environment Variables.</li>
+                            <li>Rename <code>SUPABASE_URL</code> to <code>VITE_SUPABASE_URL</code></li>
+                            <li>Rename <code>SUPABASE_ANON_KEY</code> to <code>VITE_SUPABASE_ANON_KEY</code></li>
+                            <li><strong>Redeploy</strong> the project.</li>
+                        </ul>
+                    </div>
+                )}
+
                  {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded" role="alert">{error}</div>}
                 
                 {mode === 'signup' && (
@@ -129,7 +150,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
                 )}
 
                 <div className="pt-4">
-                     <Button onClick={handleSubmit} disabled={isLoading}>
+                     <Button onClick={handleSubmit} disabled={isLoading || !isSupabaseConfigured}>
                         {isLoading ? 'Processing...' : (mode === 'login' ? 'Log In' : 'Sign Up')}
                      </Button>
                 </div>
