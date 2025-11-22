@@ -1,0 +1,49 @@
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+
+type Theme = 'light' | 'dark';
+
+type ThemeContextType = {
+    theme: Theme;
+    toggleTheme: () => void;
+};
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    // Check local storage or system preference, default to 'light' for this fix request
+    const [theme, setTheme] = useState<Theme>(() => {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            const stored = window.localStorage.getItem('theme');
+            if (stored === 'dark' || stored === 'light') return stored;
+        }
+        return 'light'; 
+    });
+
+    useEffect(() => {
+        const root = window.document.documentElement;
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
+
+    return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+};
+
+export const useTheme = () => {
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error('useTheme must be used within a ThemeProvider');
+    }
+    return context;
+};
