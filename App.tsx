@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { User, View, QuizDetails, PastPaperDetails, BookDetails } from './types';
 import { supabase } from './lib/supabase';
@@ -291,7 +290,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-screen pt-4 sm:pt-6 md:pt-8 px-4">
+        <div className="flex flex-col items-center min-h-screen pt-4 sm:pt-6 md:pt-8 px-4 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
             <main className="w-full max-w-2xl mx-auto flex-grow pb-24">
                 {renderView()}
             </main>
