@@ -104,7 +104,7 @@ const App: React.FC = () => {
         }
     };
 
-    // 2. Save Quiz Result
+    // 2. Save Quiz Result - UPDATED to store strictly in users table
     const handleSaveQuizResult = async (updatedUser: User, subject: string, score: number, total: number, unit?: string, level?: number, year?: string, type: 'quiz' | 'past_paper' = 'quiz') => {
         setCurrentUser(updatedUser);
 
@@ -118,29 +118,14 @@ const App: React.FC = () => {
             const globalPercentage = totalPossible > 0 ? totalScore / totalPossible : 0;
             const estimatedScore = Math.round(globalPercentage * 700);
 
-            const { error: historyError } = await supabase
-                .from('quiz_history')
-                .insert({
-                    user_id: updatedUser.id,
-                    subject: subject,
-                    unit: unit || null,
-                    level: level || null,
-                    year: year || null,
-                    type: type,
-                    score: score,
-                    total: total,
-                    percentage: (score/total) * 100
-                });
-            
-            if (historyError) console.error("History insert error:", historyError);
-
+            // We now only update the 'users' table. The 'progress' column (JSONB) holds the entire history.
             const { error: userError } = await supabase
                 .from('users')
                 .update({
                     streak: updatedUser.streak,
                     last_quiz_date: updatedUser.lastQuizDate,
                     estimated_score: estimatedScore,
-                    progress: updatedUser.progress
+                    progress: updatedUser.progress // This saves the full array including the new result
                 })
                 .eq('id', updatedUser.id);
 
@@ -151,7 +136,7 @@ const App: React.FC = () => {
         }
     };
 
-    // Login: Now uses EMAIL
+    // Login: Now fetches history directly from users table
     const handleLoginAttempt = async (email: string, password: string): Promise<User | null> => {
         try {
             const { data, error } = await supabase
@@ -163,20 +148,8 @@ const App: React.FC = () => {
             if (error || !data) return null;
 
             if (data.password === password) {
-                const { data: historyData } = await supabase
-                    .from('quiz_history')
-                    .select('*')
-                    .eq('user_id', data.id);
-
-                const progressMapped = (historyData || []).map((h: any) => ({
-                    subject: h.subject,
-                    unit: h.unit,
-                    level: h.level,
-                    year: h.year,
-                    type: h.type,
-                    score: h.score,
-                    total: h.total
-                }));
+                // Directly use the progress array stored in the user's JSONB column
+                const userProgress = data.progress || [];
 
                 return {
                     id: data.id,
@@ -184,7 +157,7 @@ const App: React.FC = () => {
                     password: data.password,
                     email: data.email,
                     phone: data.phone,
-                    progress: progressMapped,
+                    progress: userProgress, 
                     streak: data.streak || 0,
                     lastQuizDate: data.last_quiz_date
                 };
@@ -213,7 +186,7 @@ const App: React.FC = () => {
                 email: email,
                 password: password,
                 full_name: username, // Default full_name to username
-                progress: [],
+                progress: [], // Initialize empty progress array
                 streak: 0,
                 last_quiz_date: null
             };
@@ -290,7 +263,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-screen pt-4 sm:pt-6 md:pt-8 px-4 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
+        <div className="flex flex-col items-center min-h-screen pt-4 sm:pt-6 md:pt-8 px-4">
             <main className="w-full max-w-2xl mx-auto flex-grow pb-24">
                 {renderView()}
             </main>
