@@ -6,13 +6,20 @@ import { createClient } from '@supabase/supabase-js';
 // ------------------------------------------------------------------
 
 // Helper to safely read environment variables.
-// CRITICAL: Bundlers (Vite, Webpack) often only replace explicitly used variables (e.g. process.env.MY_VAR).
-// They might NOT handle dynamic access (process.env[key]).
-// We must explicitly check common naming conventions.
-
 const getSupabaseCredentials = () => {
     let url = '';
     let key = '';
+
+    // 0. Try LocalStorage (Manual Override for immediate fix)
+    try {
+        if (typeof window !== 'undefined') {
+            const storedUrl = localStorage.getItem('supabase_url');
+            const storedKey = localStorage.getItem('supabase_key');
+            if (storedUrl && storedKey) {
+                return { url: storedUrl, key: storedKey };
+            }
+        }
+    } catch (e) {}
 
     // 1. Try Vite (import.meta.env) - Standard for Vite/Vercel builds
     try {
@@ -62,3 +69,17 @@ if (!isSupabaseConfigured) {
 export const supabase = isSupabaseConfigured 
     ? createClient(url, key) 
     : createClient('https://placeholder.supabase.co', 'placeholder');
+
+// Function to manually save config from UI
+export const saveSupabaseConfig = (newUrl: string, newKey: string) => {
+    localStorage.setItem('supabase_url', newUrl);
+    localStorage.setItem('supabase_key', newKey);
+    window.location.reload();
+};
+
+// Function to clear manual config
+export const clearSupabaseConfig = () => {
+    localStorage.removeItem('supabase_url');
+    localStorage.removeItem('supabase_key');
+    window.location.reload();
+};
