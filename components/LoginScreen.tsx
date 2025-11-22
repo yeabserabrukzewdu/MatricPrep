@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { User } from '../types';
 import Button from './common/Button';
-import { isSupabaseConfigured, saveSupabaseConfig } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface LoginScreenProps {
     onLoginAttempt: (email: string, password: string) => Promise<User | null>;
@@ -23,15 +23,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Manual Config State
-    const [manualUrl, setManualUrl] = useState('');
-    const [manualKey, setManualKey] = useState('');
-
     const handleSubmit = async () => {
         setError('');
 
         if (!isSupabaseConfigured) {
-            setError("Configuration Error: Supabase keys are missing.");
+            setError("Supabase is not configured. Please check lib/supabase.ts");
             return;
         }
 
@@ -80,14 +76,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
         }
     };
 
-    const handleManualConnect = () => {
-        if (!manualUrl || !manualKey) {
-            alert("Please enter both URL and Key");
-            return;
-        }
-        saveSupabaseConfig(manualUrl, manualKey);
-    };
-
     return (
         <div className="flex flex-col justify-center items-center min-h-[calc(100vh-8rem)] animate-fadeIn w-full">
              <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800 dark:text-white mb-2 text-center">
@@ -96,42 +84,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginAttempt, onSignupAttem
              <p className="text-slate-500 mb-8">{mode === 'login' ? 'Login with your email' : 'Join us to ace your exams'}</p>
 
             <div className="w-full max-w-sm space-y-4">
-                {/* Configuration Warning & Manual Fix */}
+                {/* Configuration Warning */}
                 {!isSupabaseConfigured && (
-                    <div className="bg-slate-100 dark:bg-slate-800 border-2 border-orange-400 p-4 rounded-xl mb-4 shadow-lg">
-                        <div className="flex items-center gap-2 mb-2 text-orange-500">
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <p className="font-bold text-lg">Connection Needed</p>
-                        </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
-                            The app can't read the Vercel environment variables yet. You can fix this immediately by pasting your Supabase keys below.
-                        </p>
-                        
-                        <div className="space-y-2">
-                            <input 
-                                type="text" 
-                                placeholder="Project URL (https://...supabase.co)"
-                                value={manualUrl}
-                                onChange={e => setManualUrl(e.target.value)}
-                                className="w-full p-2 rounded border border-slate-300 text-sm"
-                            />
-                            <input 
-                                type="password" 
-                                placeholder="API Key (anon public)"
-                                value={manualKey}
-                                onChange={e => setManualKey(e.target.value)}
-                                className="w-full p-2 rounded border border-slate-300 text-sm"
-                            />
-                            <button 
-                                onClick={handleManualConnect}
-                                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded transition-colors"
-                            >
-                                Connect Now
-                            </button>
-                        </div>
-                        <p className="text-xs text-center mt-2 text-slate-400">These will be saved to your browser.</p>
+                    <div className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 rounded mb-4 text-sm" role="alert">
+                        <p className="font-bold">Setup Required ⚠️</p>
+                        <p>Please open <code>lib/supabase.ts</code> and paste your Supabase Project URL and Key.</p>
                     </div>
                 )}
 
