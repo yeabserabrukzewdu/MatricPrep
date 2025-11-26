@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { User, View, QuizDetails, PastPaperDetails, BookDetails } from './types';
 import { supabase } from './lib/supabase';
 
@@ -21,6 +21,7 @@ import NavBar from './components/NavBar';
 const App: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [view, setView] = useState<View>('home');
+    const [isLoadingSession, setIsLoadingSession] = useState(true);
     
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
@@ -51,14 +52,62 @@ const App: React.FC = () => {
         });
     }, []);
 
+    // Helper: Fetch user data by email (for session restore and login)
+    const fetchUserByEmail = async (email: string): Promise<User | null> => {
+         try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .single();
+            
+            if (error || !data) return null;
+
+            const userProgress = data.progress || [];
+
+            return {
+                id: data.id,
+                name: data.full_name,
+                password: data.password,
+                email: data.email,
+                phone: data.phone,
+                progress: userProgress, 
+                streak: data.streak || 0,
+                lastQuizDate: data.last_quiz_date
+            };
+        } catch (err) {
+            console.error("Fetch user error:", err);
+            return null;
+        }
+    };
+
+    // Effect: Check for existing session on mount
+    useEffect(() => {
+        const restoreSession = async () => {
+            const savedEmail = localStorage.getItem('matric_user_email');
+            if (savedEmail) {
+                const user = await fetchUserByEmail(savedEmail);
+                if (user) {
+                    setCurrentUser(user);
+                    // Skip login screens if session exists
+                    setView('subjects'); 
+                }
+            }
+            setIsLoadingSession(false);
+        };
+        restoreSession();
+    }, []);
+
     // Called after successful LOGIN
     const handleLoginSuccess = (user: User) => {
+        localStorage.setItem('matric_user_email', user.email);
         setCurrentUser(user);
         navigate('subjects');
     };
 
     // Called after successful SIGNUP (Initial DB creation)
     const handleSignupSuccess = (user: User) => {
+        localStorage.setItem('matric_user_email', user.email);
         setCurrentUser(user);
         // Go to email verification
         navigate('verify-email');
@@ -76,6 +125,7 @@ const App: React.FC = () => {
     }
 
     const handleLogout = () => {
+        localStorage.removeItem('matric_user_email');
         setCurrentUser(null);
         setView('home');
         setViewHistory(['home']);
@@ -136,37 +186,13 @@ const App: React.FC = () => {
         }
     };
 
-    // Login: Now fetches history directly from users table
+    // Login: Refactored to use helper
     const handleLoginAttempt = async (email: string, password: string): Promise<User | null> => {
-        try {
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('email', email)
-                .single();
-            
-            if (error || !data) return null;
-
-            if (data.password === password) {
-                // Directly use the progress array stored in the user's JSONB column
-                const userProgress = data.progress || [];
-
-                return {
-                    id: data.id,
-                    name: data.full_name,
-                    password: data.password,
-                    email: data.email,
-                    phone: data.phone,
-                    progress: userProgress, 
-                    streak: data.streak || 0,
-                    lastQuizDate: data.last_quiz_date
-                };
-            }
-            return null;
-        } catch (err) {
-            console.error("Login error:", err);
-            return null;
+        const user = await fetchUserByEmail(email);
+        if (user && user.password === password) {
+            return user;
         }
+        return null;
     };
 
     // Signup: Uses Username, Email, Password
@@ -261,6 +287,28 @@ const App: React.FC = () => {
                 return <HomeScreen onGetStarted={() => navigate('login')} />;
         }
     };
+
+    if (isLoadingSession) {
+        return (
+             <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+                <div className="flex flex-col items-center gap-4">
+                     {/* Embedded Mascot SVG (Small) */}
+                    <div className="w-20 h-20 relative animate-pulse">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                             <circle cx="100" cy="100" r="90" fill="#e2e8f0" className="dark:fill-slate-700" />
+                             <path fill="#58CC02" d="M49.3,-46.6C64.6,-32.9,78.2,-16.4,79.8,1.4C81.4,19.2,71,38.5,55.9,52.3C40.8,66.1,20.4,74.5,-1.9,76C-24.2,77.5,-48.4,72,-61.7,57.5C-75,43,-77.4,19.5,-73.2,0.3C-69,-18.9,-58.3,-33.8,-45.1,-46.8C-31.9,-59.8,-16,-70.8,-0.3,-70.6C15.3,-70.4,34,-59.3,49.3,-46.6Z" transform="translate(100 100) scale(1.1)" />
+                             <circle cx="75" cy="90" r="8" fill="white" />
+                             <circle cx="125" cy="90" r="8" fill="white" />
+                             <circle cx="77" cy="90" r="3" fill="black" />
+                             <circle cx="123" cy="90" r="3" fill="black" />
+                             <path d="M 85 110 Q 100 125 115 110" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                    </div>
+                    <p className="text-slate-400 dark:text-slate-500 font-bold text-sm">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col items-center min-h-screen pt-4 sm:pt-6 md:pt-8 px-4">
