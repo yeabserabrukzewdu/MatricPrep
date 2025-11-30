@@ -1,4 +1,5 @@
 
+
 import { QuizSubject } from '../types';
 
 export const subjects: Record<string, QuizSubject> = {
@@ -365,23 +366,123 @@ export const subjects: Record<string, QuizSubject> = {
         }
     },
     biology: {
-        "cell_biology": {
+        "Biology_and_technology": {
             1: [
                 {
-                    question: "Which organelle is responsible for protein synthesis?",
-                    options: ["Nucleus", "Ribosome", "Golgi Body", "Lysosome"],
+                    question: "Which instrument is essential for viewing microscopic cells?",
+                    options: ["Telescope", "Microscope", "Periscope", "Stethoscope"],
                     correct: 1,
-                    explanation: "Ribosomes translate mRNA into amino acid chains (proteins)."
+                    explanation: "A microscope is used to magnify small objects like cells that are not visible to the naked eye."
                 }
             ]
         },
-        "genetics": {
+        "Animals": {
             1: [
                 {
-                    question: "Who is known as the father of genetics?",
-                    options: ["Darwin", "Mendel", "Watson", "Crick"],
+                    question: "Which group of animals is characterized by having a backbone?",
+                    options: ["Invertebrates", "Vertebrates", "Arthropods", "Mollusks"],
                     correct: 1,
-                    explanation: "Gregor Mendel founded the science of genetics with his pea plant experiments."
+                    explanation: "Vertebrates are animals that possess a vertebral column or backbone."
+                }
+            ]
+        },
+        "Enzymes": {
+            1: [
+                {
+                    question: "Enzymes are biological catalysts made primarily of:",
+                    options: ["Lipids", "Carbohydrates", "Proteins", "Nucleic Acids"],
+                    correct: 2,
+                    explanation: "Most enzymes are proteins that speed up chemical reactions in the body."
+                }
+            ]
+        },
+        "Genetics": {
+            1: [
+                {
+                    question: "Who is known as the father of modern genetics?",
+                    options: ["Charles Darwin", "Gregor Mendel", "Louis Pasteur", "Robert Hooke"],
+                    correct: 1,
+                    explanation: "Gregor Mendel established the fundamental laws of inheritance through his work on pea plants."
+                }
+            ]
+        },
+        "The_human_body_systems": {
+            1: [
+                {
+                    question: "Which system is responsible for pumping blood throughout the body?",
+                    options: ["Respiratory System", "Circulatory System", "Digestive System", "Nervous System"],
+                    correct: 1,
+                    explanation: "The circulatory system, including the heart and vessels, transports blood."
+                }
+            ]
+        },
+        "Population_and_natural_resources": {
+            1: [
+                {
+                    question: "A resource that can be replenished naturally over time is called:",
+                    options: ["Renewable", "Non-renewable", "Fossil Fuel", "Synthetic"],
+                    correct: 0,
+                    explanation: "Renewable resources, like solar energy or wind, can be replenished naturally."
+                }
+            ]
+        },
+        "Application_of_Biology": {
+            1: [
+                {
+                    question: "Which field involves the use of living organisms to make products?",
+                    options: ["Biotechnology", "Geology", "Astronomy", "Physics"],
+                    correct: 0,
+                    explanation: "Biotechnology uses biological systems and organisms to develop or make products."
+                }
+            ]
+        },
+        "Microorganisms": {
+            1: [
+                {
+                    question: "Which of the following is NOT a microorganism?",
+                    options: ["Bacteria", "Virus", "Fungi", "Mushroom"],
+                    correct: 3,
+                    explanation: "While fungi can be microscopic, a mushroom is a macroscopic reproductive structure of fungi."
+                }
+            ]
+        },
+        "Energy_transformation": {
+            1: [
+                {
+                    question: "In photosynthesis, light energy is converted into:",
+                    options: ["Chemical energy", "Heat energy", "Mechanical energy", "Electrical energy"],
+                    correct: 0,
+                    explanation: "Plants convert light energy into chemical energy stored in glucose."
+                }
+            ]
+        },
+        "Evolution": {
+            1: [
+                {
+                    question: "The process by which species change over time is known as:",
+                    options: ["Revolution", "Evolution", "Succession", "Adaptation"],
+                    correct: 1,
+                    explanation: "Evolution is the change in the heritable characteristics of biological populations over successive generations."
+                }
+            ]
+        },
+        "Human_body_System": {
+            1: [
+                {
+                    question: "Which system controls body functions via electrical signals?",
+                    options: ["Endocrine", "Nervous", "Muscular", "Skeletal"],
+                    correct: 1,
+                    explanation: "The nervous system uses electrical signals to coordinate rapid body actions."
+                }
+            ]
+        },
+        "Climate_change": {
+            1: [
+                {
+                    question: "Which gas is a major contributor to global warming?",
+                    options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"],
+                    correct: 2,
+                    explanation: "Carbon dioxide acts as a greenhouse gas, trapping heat in the atmosphere."
                 }
             ]
         }
