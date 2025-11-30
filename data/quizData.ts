@@ -282,7 +282,7 @@ export const subjects: Record<string, QuizSubject> = {
             
             ]
         },
-        "Coordinate_Geometry": {
+        "yeabsera": {
             1: [
                 {
                     question: "What is 2 + 3?",
