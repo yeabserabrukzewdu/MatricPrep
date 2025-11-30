@@ -253,53 +253,113 @@ export const subjects: Record<string, QuizSubject> = {
         }
     },
     chemistry: {
-        "basics": {
+        "Atomic_structure_and_periodic_properties_of_the_Elements": {
             1: [
                 {
-                    question: "Which state of matter has definite volume but no definite shape?",
+                    question: "Which subatomic particle has a positive charge?",
+                    options: ["Electron", "Neutron", "Proton", "Photon"],
+                    correct: 2,
+                    explanation: "Protons are located in the nucleus and carry a positive charge."
+                }
+            ]
+        },
+        "Chemical_bonding": {
+            1: [
+                {
+                    question: "Which type of bond involves the transfer of electrons?",
+                    options: ["Covalent", "Ionic", "Metallic", "Hydrogen"],
+                    correct: 1,
+                    explanation: "Ionic bonds are formed through the electrostatic attraction between oppositely charged ions after electron transfer."
+                }
+            ]
+        },
+        "Physical_States_of_matter": {
+            1: [
+                {
+                    question: "Which state of matter has a definite volume but no definite shape?",
                     options: ["Solid", "Liquid", "Gas", "Plasma"],
                     correct: 1,
                     explanation: "Liquids take the shape of their container but maintain a constant volume."
                 }
             ]
         },
-        "atomic_theory": {
+        "Chemical_kinetics": {
             1: [
                 {
-                    question: "The nucleus of an atom contains:",
-                    options: ["Protons and Electrons", "Neutrons and Electrons", "Protons and Neutrons", "Protons only"],
-                    correct: 2,
-                    explanation: "Protons and neutrons reside in the nucleus, while electrons orbit outside."
+                    question: "What factor does NOT affect the rate of reaction?",
+                    options: ["Temperature", "Concentration", "Catalyst", "Molar Mass of Products"],
+                    correct: 3,
+                    explanation: "While temperature, concentration, and catalysts affect the rate, the molar mass of the products generally does not directly influence the speed of the reaction."
                 }
             ]
         },
-        "chemical_bonding": {
+        "Chemical_equilibrium": {
             1: [
                 {
-                    question: "Which bond involves the sharing of electrons?",
-                    options: ["Ionic", "Covalent", "Metallic", "Hydrogen"],
+                    question: "Le Chatelier's Principle applies to:",
+                    options: ["Irreversible reactions", "Reversible reactions at equilibrium", "Solids only", "Gases only"],
                     correct: 1,
-                    explanation: "Covalent bonds are formed by the sharing of electron pairs between atoms."
+                    explanation: "It states that a system at equilibrium will adjust to counteract any stress (change in conditions) applied to it."
                 }
             ]
         },
-        "acid_base": {
+        "Some_important_oxygen_containing_organic_compound": {
             1: [
                 {
-                    question: "A substance with a pH of 3 is:",
-                    options: ["Neutral", "Basic", "Acidic", "Alkaline"],
+                    question: "What is the functional group of alcohols?",
+                    options: ["-COOH", "-OH", "-CHO", "-NH2"],
+                    correct: 1,
+                    explanation: "The hydroxyl group (-OH) is the functional group characteristic of alcohols."
+                }
+            ]
+        },
+        "Acid_Base_equilibria": {
+            1: [
+                {
+                    question: "What is the pH of a neutral solution at 25°C?",
+                    options: ["0", "1", "7", "14"],
                     correct: 2,
-                    explanation: "pH values less than 7 indicate acidity."
+                    explanation: "A pH of 7 is considered neutral, being neither acidic nor basic."
                 }
             ]
         },
-        "electrochemistry": {
+        "Electrochemistry": {
             1: [
                 {
-                    question: "Oxidation occurs at the:",
-                    options: ["Anode", "Cathode", "Salt bridge", "Electrolyte"],
+                    question: "In an electrolytic cell, oxidation occurs at the:",
+                    options: ["Anode", "Cathode", "Salt bridge", "Power source"],
                     correct: 0,
-                    explanation: "Oxidation (loss of electrons) always occurs at the Anode (An Ox)."
+                    explanation: "Oxidation is the loss of electrons and always occurs at the Anode (An Ox)."
+                }
+            ]
+        },
+        "Industrial_chemistry": {
+            1: [
+                {
+                    question: "Which process is used to produce Ammonia industrially?",
+                    options: ["Contact Process", "Haber Process", "Ostwald Process", "Solvay Process"],
+                    correct: 1,
+                    explanation: "The Haber process combines nitrogen and hydrogen to produce ammonia."
+                }
+            ]
+        },
+        "Polymers": {
+            1: [
+                {
+                    question: "Which of the following is a natural polymer?",
+                    options: ["Nylon", "Polyester", "Cellulose", "PVC"],
+                    correct: 2,
+                    explanation: "Cellulose is a natural polymer found in the cell walls of plants."
+                }
+            ]
+        },
+        "Introduction_of_environmental_chemistry": {
+            1: [
+                {
+                    question: "Which gas is primarily responsible for the greenhouse effect?",
+                    options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"],
+                    correct: 2,
+                    explanation: "Carbon dioxide (CO2) traps heat in the atmosphere, contributing significantly to global warming."
                 }
             ]
         }
