@@ -46,8 +46,18 @@ const unitIcons: Record<string, string> = {
     "basics_of_electronics": '🔌',
 
     // Biology
-    "cell_biology": '🧬',
-    "genetics": '🔬',
+    "biology_and_technology": '🔬',
+    "animals": '🦁',
+    "enzymes": '⚡',
+    "genetics": '🧬',
+    "the_human_body_systems": '🫀',
+    "population_and_natural_resources": '🌲',
+    "application_of_biology": '💊',
+    "microorganisms": '🦠',
+    "energy_transformation": '🔋',
+    "evolution": '🦕',
+    "human_body_system": '🧠',
+    "climate_change": '🔥',
 
     // Chemistry
     "atomic_structure_and_periodic_properties_of_the_elements": '⚛️',
@@ -135,8 +145,21 @@ const unitDescriptions: Record<string, Record<string, string>> = {
         "Introduction_of_environmental_chemistry": "Grade 12 • Unit 5"
     },
     biology: {
-        "cell_biology": "Grade 11 • Unit 2",
-        "genetics": "Grade 12 • Unit 1"
+        // Grade 11
+        "Biology_and_technology": "Grade 11 • Unit 1",
+        "Animals": "Grade 11 • Unit 2",
+        "Enzymes": "Grade 11 • Unit 3",
+        "Genetics": "Grade 11 • Unit 4",
+        "The_human_body_systems": "Grade 11 • Unit 5",
+        "Population_and_natural_resources": "Grade 11 • Unit 6",
+
+        // Grade 12
+        "Application_of_Biology": "Grade 12 • Unit 1",
+        "Microorganisms": "Grade 12 • Unit 2",
+        "Energy_transformation": "Grade 12 • Unit 3",
+        "Evolution": "Grade 12 • Unit 4",
+        "Human_body_System": "Grade 12 • Unit 5",
+        "Climate_change": "Grade 12 • Unit 6"
     },
     english: {
         "grammar": "Grade 11 & 12 • General",
