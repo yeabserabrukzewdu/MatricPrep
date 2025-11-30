@@ -33,24 +33,40 @@ const unitIcons: Record<string, string> = {
     "vectors": '↗️',
     "linear_programming": '📉',
     "financial_mathematics": '💹',
+    "transformations_of_the_plane": '🔄',
+    "mathematical_applications_in_business": '💼',
+    "matrices": '▦',
+    "determinants": '⇹',
+    "calculus": '∫'
 };
 
 // Mapping for Grade and Unit descriptions
 const unitDescriptions: Record<string, Record<string, string>> = {
     math: {
+        // Grade 11
         "Relations_and_Functions": "Grade 11 • Unit 1",
         "Rational_Expressions": "Grade 11 • Unit 2",
-        "Coordinate_Geometry": "Grade 11 • Unit 3",
-        "Trigonometry": "Grade 11 • Unit 4", // Also covers G12
-        "Statistics": "Grade 11 • Unit 5",
-        "Probability": "Grade 11 • Unit 6",
-        "Matrices and Determinants": "Grade 11 • Unit 7",
-        "Vectors": "Grade 11 • Unit 8",
-        "Linear_Programming": "Grade 11 • Unit 9",
+        "Matrices": "Grade 11 • Unit 3",
+        "Matrices and Determinants": "Grade 11 • Unit 3 & 4", // Handling legacy combined key
+        "Determinants": "Grade 11 • Unit 4",
+        "Vectors": "Grade 11 • Unit 5",
+        "Transformations_of_the_plane": "Grade 11 • Unit 6",
+        "Coordinate_Geometry": "Grade 11 • Unit 6 (Transformations)", // Mapping legacy key
+        "Statistics": "Grade 11 • Unit 7 / Grade 12 • Unit 3",
+        "Probability": "Grade 11 • Unit 8",
+        
+        // Grade 12
         "Sequences and Series": "Grade 12 • Unit 1",
-        "Limits and Continuity": "Grade 12 • Unit 2",
-        "Financial_Mathematics": "Grade 12 • Unit 3",
-        "Calculus": "Grade 12 • Unit 4"
+        "Limits and Continuity": "Grade 12 • Unit 2 (Calculus)",
+        "Calculus": "Grade 12 • Unit 2",
+        "Introduction to Calculus": "Grade 12 • Unit 2",
+        "Linear_Programming": "Grade 12 • Unit 4",
+        "Introduction to linear programming": "Grade 12 • Unit 4",
+        "Financial_Mathematics": "Grade 12 • Unit 5",
+        "Mathematical applications in business": "Grade 12 • Unit 5",
+        
+        // Others
+        "Trigonometry": "Grade 11 & 12 • Supplementary" 
     },
     physics: {
         "mechanics": "Grade 11 • Unit 2",
