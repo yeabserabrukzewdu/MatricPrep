@@ -131,7 +131,17 @@ export const subjects: Record<string, QuizSubject> = {
         }
     },
     physics: {
-        "vectors": {
+        "Physics_and_human_society": {
+            1: [
+                {
+                    question: "Which branch of physics deals with the study of light?",
+                    options: ["Mechanics", "Thermodynamics", "Optics", "Electromagnetism"],
+                    correct: 2,
+                    explanation: "Optics is the branch of physics that studies the behavior and properties of light."
+                }
+            ]
+        },
+        "Vectors": {
             1: [
                 {
                     question: "The resultant of two vectors is maximum when the angle between them is:",
@@ -141,7 +151,17 @@ export const subjects: Record<string, QuizSubject> = {
                 }
             ]
         },
-        "mechanics": {
+        "Motion_in_one_and_two_dimensions": {
+             1: [
+                {
+                    question: "In projectile motion, the horizontal component of velocity:",
+                    options: ["Increases", "Decreases", "Remains constant", "Becomes zero"],
+                    correct: 2,
+                    explanation: "Ignoring air resistance, there is no acceleration in the horizontal direction, so velocity stays constant."
+                }
+            ]
+        },
+        "Dynamics": {
             1: [
                 {
                     question: "Newton's First Law is also known as the law of:",
@@ -151,23 +171,83 @@ export const subjects: Record<string, QuizSubject> = {
                 }
             ]
         },
-        "thermodynamics": {
-            1: [
+        "Heat_conduction_and_calorimetry": {
+             1: [
                 {
-                    question: "Which law states that energy cannot be created or destroyed?",
-                    options: ["Zeroth Law", "First Law", "Second Law", "Third Law"],
-                    correct: 1,
-                    explanation: "The First Law of Thermodynamics is the law of conservation of energy."
+                    question: "Which method of heat transfer requires a medium?",
+                    options: ["Conduction only", "Radiation only", "Conduction and Convection", "Radiation and Convection"],
+                    correct: 2,
+                    explanation: "Conduction and convection require matter (solid/fluid) to transfer heat, while radiation does not."
                 }
             ]
         },
-        "electromagnetism": {
+        "Electrostatics_and_electric_circuit": {
+             1: [
+                {
+                    question: "The unit of electric potential is:",
+                    options: ["Joule", "Newton", "Volt", "Ampere"],
+                    correct: 2,
+                    explanation: "Electric potential (voltage) is measured in Volts (V)."
+                }
+            ]
+        },
+        "Nuclear_physics": {
+             1: [
+                {
+                    question: "Which particle has a positive charge in the nucleus?",
+                    options: ["Electron", "Neutron", "Proton", "Photon"],
+                    correct: 2,
+                    explanation: "Protons are positively charged particles found in the atomic nucleus."
+                }
+            ]
+        },
+        "Application_of_physics_in_other_fields": {
+             1: [
+                {
+                    question: "Geophysics applies physics principles to study:",
+                    options: ["Living organisms", "The Earth", "Space", "Chemicals"],
+                    correct: 1,
+                    explanation: "Geophysics is the physics of the Earth and its environment in space."
+                }
+            ]
+        },
+        "Two_dimensional_motion": {
+             1: [
+                {
+                    question: "Which of these is an example of 2D motion?",
+                    options: ["A train on a straight track", "A ball thrown in the air", "An elevator going up", "Dropping a stone"],
+                    correct: 1,
+                    explanation: "Projectile motion (ball in air) involves movement in both x (horizontal) and y (vertical) axes."
+                }
+            ]
+        },
+        "Fluid_mechanics": {
+             1: [
+                {
+                    question: "Archimedes' principle explains:",
+                    options: ["Viscosity", "Surface Tension", "Buoyancy", "Turbulence"],
+                    correct: 2,
+                    explanation: "It states that the upward buoyant force is equal to the weight of the fluid displaced."
+                }
+            ]
+        },
+        "Electromagnetism": {
             1: [
                 {
                     question: "The unit of magnetic field strength is:",
                     options: ["Tesla", "Weber", "Volt", "Ampere"],
                     correct: 0,
                     explanation: "Magnetic field strength is measured in Tesla (T)."
+                }
+            ]
+        },
+        "Basics_of_electronics": {
+             1: [
+                {
+                    question: "Which component stores electrical charge?",
+                    options: ["Resistor", "Capacitor", "Diode", "Transistor"],
+                    correct: 1,
+                    explanation: "A capacitor is a passive electronic component that stores electrical energy in an electric field."
                 }
             ]
         }
