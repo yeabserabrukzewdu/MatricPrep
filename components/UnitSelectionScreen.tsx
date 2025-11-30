@@ -21,12 +21,12 @@ const unitIcons: Record<string, string> = {
     "limits_and_continuity": '♾️',
     "matrices_and_determinants": '🔲',
     "sequences_and_series": '🔢',
-    "vectors": '🚀', // Changed to Rocket for direction/magnitude
-    "linear_programming": '🎯', // Changed to Target for optimization
+    "vectors": '🚀', 
+    "linear_programming": '🎯', 
     "financial_mathematics": '💰',
     "transformations_of_the_plane": '🔄',
-    "mathematical_applications_in_business": '💰', // Money bag
-    "matrices": '🧮', // Abacus/Grid
+    "mathematical_applications_in_business": '💰',
+    "matrices": '🧮',
     "determinants": '📐',
     "calculus": '📉',
     "introduction_to_calculus": '📉',
@@ -50,11 +50,17 @@ const unitIcons: Record<string, string> = {
     "genetics": '🔬',
 
     // Chemistry
-    "basics": '🧪',
-    "atomic_theory": '⚛️',
+    "atomic_structure_and_periodic_properties_of_the_elements": '⚛️',
     "chemical_bonding": '🔗',
-    "acid_base": '🍋',
+    "physical_states_of_matter": '🧊',
+    "chemical_kinetics": '⏱️',
+    "chemical_equilibrium": '⚖️',
+    "some_important_oxygen_containing_organic_compound": '🧪',
+    "acid_base_equilibria": '🍋',
     "electrochemistry": '🔋',
+    "industrial_chemistry": '🏭',
+    "polymers": '🧶',
+    "introduction_of_environmental_chemistry": '🌳',
 
     // Others
     "grammar": '📖',
@@ -113,11 +119,20 @@ const unitDescriptions: Record<string, Record<string, string>> = {
         "Basics_of_electronics": "Grade 12 • Unit 5"
     },
     chemistry: {
-        "basics": "Grade 11 • Unit 1",
-        "atomic_theory": "Grade 11 • Unit 2",
-        "chemical_bonding": "Grade 11 • Unit 3",
-        "acid_base": "Grade 12 • Unit 1",
-        "electrochemistry": "Grade 12 • Unit 2"
+        // Grade 11
+        "Atomic_structure_and_periodic_properties_of_the_Elements": "Grade 11 • Unit 1",
+        "Chemical_bonding": "Grade 11 • Unit 2",
+        "Physical_States_of_matter": "Grade 11 • Unit 3",
+        "Chemical_kinetics": "Grade 11 • Unit 4",
+        "Chemical_equilibrium": "Grade 11 • Unit 5",
+        "Some_important_oxygen_containing_organic_compound": "Grade 11 • Unit 6",
+
+        // Grade 12
+        "Acid_Base_equilibria": "Grade 12 • Unit 1",
+        "Electrochemistry": "Grade 12 • Unit 2",
+        "Industrial_chemistry": "Grade 12 • Unit 3",
+        "Polymers": "Grade 12 • Unit 4",
+        "Introduction_of_environmental_chemistry": "Grade 12 • Unit 5"
     },
     biology: {
         "cell_biology": "Grade 11 • Unit 2",
@@ -175,7 +190,7 @@ const UnitSelectionScreen: React.FC<UnitSelectionScreenProps> = ({ subjectKey, o
         <Container title={subjectName} goBack={goBack}>
             {units.length > 0 ? (
                 units.map(unitKey => {
-                    const iconKey = unitKey.toLowerCase().replace(/ /g, '_');
+                    const iconKey = unitKey.toLowerCase().replace(/ /g, '_').replace(/-/g, '_');
                     const description = getDescription(unitKey);
                     
                     return (
