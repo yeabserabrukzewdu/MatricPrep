@@ -11,14 +11,52 @@ interface UnitSelectionScreenProps {
 }
 
 const unitIcons: Record<string, string> = {
+    // Math
     "relations_and_functions": '📈',
     "rational_expressions": '➗',
     "coordinate_geometry": '📏',
     "trigonometry": '📐',
     "statistics": '📊',
     "probability": '🎲',
+    "limits_and_continuity": '♾️',
+    "matrices_and_determinants": '🔲',
+    "sequences_and_series": '🔢',
+    "vectors": '🚀', // Changed to Rocket for direction/magnitude
+    "linear_programming": '🎯', // Changed to Target for optimization
+    "financial_mathematics": '💰',
+    "transformations_of_the_plane": '🔄',
+    "mathematical_applications_in_business": '💰', // Money bag
+    "matrices": '🧮', // Abacus/Grid
+    "determinants": '📐',
+    "calculus": '📉',
+    "introduction_to_calculus": '📉',
+    "introduction_to_linear_programming": '🎯',
+
+    // Physics
+    "physics_and_human_society": '🌍',
+    "motion_in_one_and_two_dimensions": '🏎️',
+    "dynamics": '🚀',
+    "heat_conduction_and_calorimetry": '🔥',
+    "electrostatics_and_electric_circuit": '⚡',
+    "nuclear_physics": '☢️',
+    "application_of_physics_in_other_fields": '🔭',
+    "two_dimensional_motion": '🥎',
+    "fluid_mechanics": '🌊',
+    "electromagnetism": '🧲',
+    "basics_of_electronics": '🔌',
+
+    // Biology
     "cell_biology": '🧬',
+    "genetics": '🔬',
+
+    // Chemistry
     "basics": '🧪',
+    "atomic_theory": '⚛️',
+    "chemical_bonding": '🔗',
+    "acid_base": '🍋',
+    "electrochemistry": '🔋',
+
+    // Others
     "grammar": '📖',
     "mechanics": '⚙️',
     "government_basics": '🏛️',
@@ -27,17 +65,6 @@ const unitIcons: Record<string, string> = {
     "supply_and_demand": '📈',
     "vocabulary": '📚',
     "logical_reasoning": '🧠',
-    "limits_and_continuity": '♾️',
-    "matrices_and_determinants": '🔲',
-    "sequences_and_series": '🔢',
-    "vectors": '↗️',
-    "linear_programming": '📉',
-    "financial_mathematics": '💹',
-    "transformations_of_the_plane": '🔄',
-    "mathematical_applications_in_business": '💼',
-    "matrices": '▦',
-    "determinants": '⇹',
-    "calculus": '∫'
 };
 
 // Mapping for Grade and Unit descriptions
@@ -47,11 +74,11 @@ const unitDescriptions: Record<string, Record<string, string>> = {
         "Relations_and_Functions": "Grade 11 • Unit 1",
         "Rational_Expressions": "Grade 11 • Unit 2",
         "Matrices": "Grade 11 • Unit 3",
-        "Matrices and Determinants": "Grade 11 • Unit 3 & 4", // Handling legacy combined key
+        "Matrices and Determinants": "Grade 11 • Unit 3 & 4",
         "Determinants": "Grade 11 • Unit 4",
         "Vectors": "Grade 11 • Unit 5",
         "Transformations_of_the_plane": "Grade 11 • Unit 6",
-        "Coordinate_Geometry": "Grade 11 • Unit 6 (Transformations)", // Mapping legacy key
+        "Coordinate_Geometry": "Grade 11 • Unit 6 (Transformations)",
         "Statistics": "Grade 11 • Unit 7 / Grade 12 • Unit 3",
         "Probability": "Grade 11 • Unit 8",
         
@@ -69,10 +96,21 @@ const unitDescriptions: Record<string, Record<string, string>> = {
         "Trigonometry": "Grade 11 & 12 • Supplementary" 
     },
     physics: {
-        "mechanics": "Grade 11 • Unit 2",
-        "vectors": "Grade 11 • Unit 1",
-        "thermodynamics": "Grade 12 • Unit 1",
-        "electromagnetism": "Grade 12 • Unit 2"
+        // Grade 11
+        "Physics_and_human_society": "Grade 11 • Unit 1",
+        "Vectors": "Grade 11 • Unit 2",
+        "Motion_in_one_and_two_dimensions": "Grade 11 • Unit 3",
+        "Dynamics": "Grade 11 • Unit 4",
+        "Heat_conduction_and_calorimetry": "Grade 11 • Unit 5",
+        "Electrostatics_and_electric_circuit": "Grade 11 • Unit 6",
+        "Nuclear_physics": "Grade 11 • Unit 7",
+
+        // Grade 12
+        "Application_of_physics_in_other_fields": "Grade 12 • Unit 1",
+        "Two_dimensional_motion": "Grade 12 • Unit 2",
+        "Fluid_mechanics": "Grade 12 • Unit 3",
+        "Electromagnetism": "Grade 12 • Unit 4",
+        "Basics_of_electronics": "Grade 12 • Unit 5"
     },
     chemistry: {
         "basics": "Grade 11 • Unit 1",
