@@ -1,25 +1,26 @@
 import { QuizSubject } from '../types';
+import { mathData } from './mathData';
+import { physicsData } from './physicsData';
+import { chemistryData } from './chemistryData';
+import { biologyData } from './biologyData';
+import { historyData } from './historyData';
+import { geographyData } from './geographyData';
+import { economicsData } from './economicsData';
+import { englishData } from './englishData';
 
 export const subjects: Record<string, QuizSubject> = {
-   
-
-    aptitude: {
-        "logical_reasoning": {
-            1: [
-                {
-                    question: "Find the next number in the series: 2, 5, 10, 17, 26, ?",
-                    options: ["35", "36", "37", "38"],
-                    correct: 2,
-                    explanation: "The pattern is n² + 1, starting with n=1. For n=6, the value is 6² + 1 = 37."
-                },
-                {
-                    question: "All books in the library are fiction. 'The Great Gatsby' is a book in the library. Therefore, 'The Great Gatsby' is:",
-                    options: ["Non-fiction", "Fiction", "A magazine", "Cannot be determined"],
-                    correct: 1,
-                    explanation: "This is a simple deductive reasoning problem. If the premise (all books in the library are fiction) is true, and the condition is met ('The Great Gatsby' is in the library), then the conclusion must be true."
-                }
-            ],
-            2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: []
-        }
+    math: mathData,
+    physics: physicsData,
+    chemistry: chemistryData,
+    biology: biologyData,
+    history: historyData,
+    geography: geographyData,
+    economics: economicsData,
+    english: englishData,
+    sat: {
+        "Vocabulary": { 1: [] }
     },
+    aptitude: {
+        "Logical_Reasoning": { 1: [] }
+    }
 };
