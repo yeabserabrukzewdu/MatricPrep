@@ -146,3 +146,27 @@ export const physicsData: QuizSubject = {
     "Electromagnetism": { 1: [] },
     "Basics_of_electronics": { 1: [] }
 };
+
+// 🔧 Randomize correct option positions while preserving the correct answer
+(function randomizeCorrectPositions(data: QuizSubject) {
+    for (const subjectKey in data) {
+        const levels = data[subjectKey as keyof QuizSubject];
+        for (const level in levels) {
+            const questions = (levels as any)[level] as Array<any>;
+            if (!Array.isArray(questions)) continue;
+            for (const q of questions) {
+                if (!q || !Array.isArray(q.options)) continue;
+                const correctIndex = q.correct;
+                const options = q.options;
+                if (typeof correctIndex !== 'number' || options.length <= 1) continue;
+                const newIndex = Math.floor(Math.random() * options.length);
+                if (newIndex === correctIndex) continue; // already randomized
+                // swap to keep the same correct answer text but at a new index
+                const tmp = options[correctIndex];
+                options[correctIndex] = options[newIndex];
+                options[newIndex] = tmp;
+                q.correct = newIndex;
+            }
+        }
+    }
+})(physicsData);
